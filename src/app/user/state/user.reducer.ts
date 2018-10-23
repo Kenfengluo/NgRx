@@ -1,6 +1,11 @@
 import { User } from '../user';
 
-export function reducer(state: UserState, action): UserState {
+const initialState: UserState = {
+  maskUserName: false,
+  currentUser: null
+};
+
+export function reducer(state = initialState, action): UserState {
   switch (action.type) {
 
     case 'MASK_USER_NAME':
