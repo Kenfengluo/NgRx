@@ -1,9 +1,23 @@
 import { User } from '../user';
+import { createFeatureSelector, createSelector } from '@ngrx/store';
 
 const initialState: UserState = {
   maskUserName: false,
   currentUser: null
 };
+
+const getUserFeatureState = createFeatureSelector<UserState>('user');
+
+export const getMaskUserName = createSelector(
+  getUserFeatureState,
+  state => state.maskUserName
+);
+
+export const getCurrentUser = createSelector(
+  getUserFeatureState,
+  state => state.currentUser
+);
+
 
 export function reducer(state = initialState, action): UserState {
   switch (action.type) {
