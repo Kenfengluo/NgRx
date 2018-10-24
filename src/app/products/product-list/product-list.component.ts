@@ -5,6 +5,8 @@ import { ProductService } from '../product.service';
 import { Store, select } from '@ngrx/store';
 import * as fromProduct from '../state/product.reducer';
 import * as productActions from '../state/product.actions';
+import { Observable } from 'rxjs';
+import { takeWhile } from 'rxjs/operators';
 
 @Component({
   selector: 'pm-product-list',
@@ -16,28 +18,37 @@ export class ProductListComponent implements OnInit, OnDestroy {
   errorMessage: string;
 
   displayCode: boolean;
+  componentActive = true;
+
 
   products: Product[];
 
   // Used to highlight the selected product in the list
   selectedProduct: Product | null;
+  products$: Observable<Product[]>;
+  errorMessage$: Observable<string>;
 
   constructor(private productService: ProductService,
     private store: Store<fromProduct.State>) { }
 
   ngOnInit(): void {
-    // TODO: Unsubscribe
-    this.store.pipe(select(fromProduct.getCurrentProduct)).subscribe(
+    this.store.pipe(select(fromProduct.getCurrentProduct),
+      takeWhile(() => this.componentActive)
+    ).subscribe(
       currentProduct => this.selectedProduct = currentProduct
     );
 
-    this.productService.getProducts().subscribe(
-      (products: Product[]) => this.products = products,
-      (err: any) => this.errorMessage = err.error
-    );
+    this.errorMessage$ = this.store.pipe(select(fromProduct.getError));
+    this.store.dispatch(new productActions.Load);
+    this.products$ = this.store.pipe(select(fromProduct.getProducts));
+    // this.productService.getProducts().subscribe(
+    //   (products: Product[]) => this.products = products,
+    //   (err: any) => this.errorMessage = err.error
+    // );
 
-    // TODO: Unsubscribe
-    this.store.pipe(select(fromProduct.getShowProductCode)).subscribe(
+    this.store.pipe(select(fromProduct.getShowProductCode),
+      takeWhile(() => this.componentActive)
+    ).subscribe(
       showPorductCode => {
           this.displayCode = showPorductCode;
       }
@@ -45,6 +56,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.componentActive = false;
   }
 
   checkChanged(value: boolean): void {
