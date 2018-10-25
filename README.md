@@ -6,3 +6,6 @@
 3. npm start
 
 # learn more detail please check the package.json and angular.json file
+
+# there are two branches and feel to take a look(just different architectural strategy)
+1.feature/architectual-enhancement
