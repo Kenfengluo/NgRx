@@ -12,7 +12,7 @@ export class ProductEffects {
   constructor(private actions$: Actions, private productService: ProductService) {}
 
   @Effect()
-  loasdProducts$ = this.actions$.pipe(
+  loadProducts$ = this.actions$.pipe(
     ofType(productActions.ProductActionTypes.Load),
     mergeMap((action: productActions.Load) => this.productService.getProducts().pipe(
       map((products: Product[]) => (new productActions.LoadSuccess(products))),
