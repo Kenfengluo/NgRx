@@ -42,7 +42,8 @@ export class ProductService {
     const url = `${this.productsUrl}/${id}`;
     return this.http.delete<Product>(url, { headers: headers })
       .pipe(
-        tap(data => console.log('deleteProduct: ' + id)),
+        map(() => id),
+        tap(data => console.log('deleteProduct: ' + data)),
         catchError(this.handleError)
       );
   }
